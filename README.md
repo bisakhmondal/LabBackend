@@ -1,2 +1,3 @@
 ## Project Name:  LabBackend
-This is an auto generated README. Please edit if required.
+
+Backend Server for DVLP CMATER Lab Jadavpur University, written in Golang.
