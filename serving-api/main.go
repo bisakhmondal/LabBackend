@@ -1,6 +1,7 @@
 package main
 
 import (
+	"serving-api/server"
 	"os/signal"
 	"serving-api/data"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -10,15 +11,17 @@ import (
 	"os"
 	"log"
 	"time"
-	"github.com/gorilla/handlers"
 	"net/http"
 	"github.com/gorilla/mux"
 	"github.com/nicholasjackson/env"
 )
 
 
-var bindAddress = env.String("BIND_ADDRESS",false,":9091","bind address for server")
-
+var (
+	bindAddress = env.String("BIND_ADDRESS",false,":8080","bind address for server")
+	certFile = os.Getenv("CertFile")
+	certKey = os.Getenv("CertKey")
+)
 func main(){
 
 	env.Parse()
@@ -50,25 +53,22 @@ func main(){
 	smux := mux.NewRouter()
 
 	getRouter := smux.Methods(http.MethodGet).Subrouter()
-	getRouter.Handle("/",nil)
+	getRouter.HandleFunc("/",func(rw http.ResponseWriter, r* http.Request){
+		rw.Header().Set("Content-Type","text/plain; charset=utf-8")
 
-	//cors
-	corsH := handlers.CORS(handlers.AllowedOrigins([]string{"*"}))
+		l.Println("Received on ROute '/' ")
+		rw.WriteHeader(http.StatusOK)
+		rw.Write([]byte("Hello WOrLd"))
+	})
 
-
-	//basic server
-	server := http.Server{
-		
-		Addr : *bindAddress,
-		Handler: corsH(smux),
-		IdleTimeout: 300*time.Second,
-	}
-
+	//Create a new tls server
+	Server := server.New(smux, *bindAddress)
 
 	//starting server
 	go func(){
 		l.Println("starting at Port: ",*bindAddress)
-		err:=server.ListenAndServe()
+
+		err := Server.ListenAndServeTLS(certFile, certKey)
 		
 		if err!=nil{
 			l.Fatal("Server starting Failed",err)
@@ -84,7 +84,7 @@ func main(){
 	
 	l.Println("Shutting Down... ",sig)
 
-	server.Shutdown(ctx)
+	Server.Shutdown(ctx)
 
 }
 
