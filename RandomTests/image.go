@@ -3,15 +3,17 @@ package main
 import (
 	"bufio"
 	"bytes"
+	"compress/gzip"
+	"encoding/base64"
 	"fmt"
+	"github.com/nfnt/resize"
 	"image"
+	"image/jpeg"
 	_ "image/jpeg"
 	_ "image/png"
 	"io"
 	"io/ioutil"
 	"os"
-	"encoding/base64"
-	"strconv"
 )
 
 func main() {
@@ -19,7 +21,7 @@ func main() {
 	fmt.Println("Width:", width, "Height:", height)
 
 	//fil,_ := os.Open("n.png")
-	fl2 ,_ := os.Create("nn.png")//os.Open("nn.png")
+	//fl2 ,_ := os.Create("nn.png")//os.Open("nn.png")
 
 
 	// Shuvayan test
@@ -29,8 +31,7 @@ func main() {
 	content , _ := ioutil.ReadAll(readeree)
 
 	encoded := base64.StdEncoding.EncodeToString(content)
-
-	fmt.Println("Encoded : " + strconv.Itoa( len(encoded) ))
+	fmt.Println("Previous Encoded : " , len(encoded))
 
 	//Method 1
 	////byt := new(bytes.Buffer)
@@ -44,11 +45,37 @@ func main() {
 	//method 2
 	//info,_  :=fil.Stat()
 	//byt:= make([]byte,info.Size())
-	byt ,_ := ioutil.ReadFile("n.png")
-	reader := bytes.NewReader(byt)
-	 n,_ := io.Copy(fl2,reader)
-	 fmt.Println(n)
-	 fl2.Close()
+
+	//Only Compression
+	//byt ,_ := ioutil.ReadFile("n.png")
+	////Compress BYTES
+	//wrt := new(bytes.Buffer)
+	//gw,_ := gzip.NewWriterLevel(wrt, gzip.BestCompression)
+	//gw.Write(byt)
+	//newencoded := base64.StdEncoding.EncodeToString(wrt.Bytes())
+	//fmt.Println("New Encoding", len(newencoded),"saved len: ",len(encoded)-len(newencoded))
+
+
+	fil ,_ := os.Open("n.png")
+	//Resize + Compression
+	imgD,_,_ := image.Decode(fil)
+	imgD =resize.Resize(256,256,imgD,resize.Bilinear)
+	newByt := new(bytes.Buffer)
+
+	jpeg.Encode(newByt,imgD,nil)
+	ff , _ := os.Create("resizeN.png")
+	io.Copy(ff,bytes.NewReader(newByt.Bytes()))
+	//Compress BYTES
+	wrt := new(bytes.Buffer)
+	gw,_ := gzip.NewWriterLevel(wrt, gzip.BestCompression)
+	gw.Write(newByt.Bytes())
+	newencoded := base64.StdEncoding.EncodeToString(wrt.Bytes())
+	fmt.Println("New Encoding", len(newencoded),"saved len: ",len(encoded)-len(newencoded))
+
+	//reader := bytes.NewReader(byt)
+	// n,_ := io.Copy(fl2,reader)
+	// fmt.Println(n)
+	// fl2.Close()
 }
 
 func getImageDimension(imagePath string) (int, int) {
