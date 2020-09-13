@@ -1,19 +1,19 @@
 package main
 
 import (
-	"serving-api/server"
-	"os/signal"
-	"serving-api/data"
-	"go.mongodb.org/mongo-driver/mongo/options"
-	"go.mongodb.org/mongo-driver/mongo"
-	"github.com/spf13/viper"
 	"context"
-	"os"
-	"log"
-	"time"
-	"net/http"
 	"github.com/gorilla/mux"
 	"github.com/nicholasjackson/env"
+	"github.com/spf13/viper"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"log"
+	"net/http"
+	"os"
+	"os/signal"
+	"serving-api/data"
+	"serving-api/server"
+	"time"
 )
 
 

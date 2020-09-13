@@ -1,3 +1,4 @@
 config.yaml 
 # mongo secret key
 tests/
+.idea/
