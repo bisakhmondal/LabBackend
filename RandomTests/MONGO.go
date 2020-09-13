@@ -9,6 +9,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
 	"time"
+	"data"
+
 )
 
 type user struct{
@@ -17,6 +19,7 @@ type user struct{
 	STREAM string `bson:"stream,omitempty"`
 }
 type Users []user
+
 func main(){
 	ctx, cancel := context.WithTimeout(context.Background(),10*time.Second)
 	defer cancel()
@@ -30,13 +33,13 @@ func main(){
 		log.Fatal("Unable to Connect")
 	}
 
-	dbs,_ := client.ListDatabaseNames(ctx,bson.M{})
+	dbs, _ := client.ListDatabaseNames(ctx,bson.M{})
 	fmt.Println("Current Database: ",dbs)
 	// fmt.Println("C Done")
 	coll := client.Database("users").Collection("info")
 
 	//Fetch
-	crsr,err :=coll.Find(ctx,bson.M{}) //query bson.M{"name":bson.M{"$eq":"Shuvayan"}}
+	crsr,err :=coll.Find(ctx , bson.M{}) //query bson.M{"name":bson.M{"$eq":"Shuvayan"}}
 	
 	//inUser := user{
 	//	NAME:   "NewStudent",
@@ -57,12 +60,12 @@ func main(){
 	//log.Println(inserted)
 	//selective fetch
 
-	 crs2,err := coll.Find(ctx,bson.M{}, options.Find().SetProjection(bson.M{"_id":0,"name":1}))
+	// crs2,err := coll.Find(ctx,bson.M{}, options.Find().SetProjection(bson.M{"_id":0,"name":1}))
 
-	 var data2 Users
-	check(err)
-	err = crs2.All(ctx, &data2); check(err)
-	log.Println(data2)
+	// var data2 Users
+	// check(err)
+	// err = crs2.All(ctx, &data2); check(err)
+	// log.Println(data2)
 
 }
 

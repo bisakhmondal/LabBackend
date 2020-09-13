@@ -12,7 +12,7 @@ import (
 // }
 
 func getURI(key string) string{
-	viper.SetConfigFile("config.yaml")
+	viper.SetConfigFile("../serving-api/config.yaml")
 
 	err:= viper.ReadInConfig()
 	

@@ -2,17 +2,19 @@ package main
 
 import (
 	"context"
-	"github.com/gorilla/mux"
+	// "github.com/gorilla/mux"
 	"github.com/nicholasjackson/env"
 	"github.com/spf13/viper"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/bson"
+	// "go.mongodb.org/mongo-driver/bson/primitive"
 	"log"
-	"net/http"
+	// "net/http"
 	"os"
-	"os/signal"
+	// "os/signal"
 	"serving-api/data"
-	"serving-api/server"
+	// "serving-api/server"
 	"time"
 )
 
@@ -35,6 +37,7 @@ func main(){
 
 	URI := getURI("MONGO")
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(URI))
+	defer client.Disconnect(ctx)
 	
 	if err !=nil{
 		l.Fatal("Unable to Connect")
@@ -46,45 +49,76 @@ func main(){
 	//wrapped mongo client
 	mclient := data.NewMongoClient(&ctx, client)
 
+
+
+	//testing mongo client 
+
+	dbs, _ := client.ListDatabaseNames(ctx,bson.M{})
+	l.Println("Current Database: ",dbs)
+	// fmt.Println("C Done")
+	coll := client.Database("users").Collection("persons")
+
+
+	PersonList := data.PersonList
+
+	for person := range PersonList{
+		inserted,err := coll.InsertOne( ctx , person)
+		if err != nil{
+			l.Println(err.Error() )
+			l.Fatal("Failed inserting")
+			
+		} else {
+			l.Println("Inserted")
+		}
+		l.Println(inserted)
+		
+	}
+
+
+
+
+
+	// test end
+
 	//just testing
 	log.Println(mclient)
 
 	//Gorilla router
-	smux := mux.NewRouter()
+	// smux := mux.NewRouter()
 
-	getRouter := smux.Methods(http.MethodGet).Subrouter()
-	getRouter.HandleFunc("/",func(rw http.ResponseWriter, r* http.Request){
-		rw.Header().Set("Content-Type","text/plain; charset=utf-8")
+	// getRouter := smux.Methods(http.MethodGet).Subrouter()
+	// getRouter.HandleFunc("/",func(rw http.ResponseWriter, r* http.Request){
+	// 	rw.Header().Set("Content-Type","text/plain; charset=utf-8")
 
-		l.Println("Received on ROute '/' ")
-		rw.WriteHeader(http.StatusOK)
-		rw.Write([]byte("Hello WOrLd"))
-	})
+	// 	l.Println("Received on ROute '/' ")
+	// 	rw.WriteHeader(http.StatusOK)
+	// 	rw.Write([]byte("Hello WOrLd"))
+	// })
 
-	//Create a new tls server
-	Server := server.New(smux, *bindAddress)
+	// //Create a new tls server
+	// Server := server.New(smux, *bindAddress)
 
-	//starting server
-	go func(){
-		l.Println("starting at Port: ",*bindAddress)
+	// //starting server
+	// go func(){
+	// 	l.Println("starting at Port: ",*bindAddress)
 
-		err := Server.ListenAndServeTLS(certFile, certKey)
+	// 	err := Server.ListenAndServeTLS(certFile, certKey)
 		
-		if err!=nil{
-			l.Fatal("Server starting Failed",err)
-		}
-	}()
+	// 	if err!=nil{
+	// 		l.Fatal("Server starting Failed",err)
+	// 	}
+	// }()
 	
-	ch := make(chan os.Signal)
+	// ch := make(chan os.Signal)
 
-	signal.Notify(ch, os.Kill)
-	signal.Notify(ch, os.Interrupt)
+	// signal.Notify(ch, os.Kill)
+	// signal.Notify(ch, os.Interrupt)
 
-	sig := <-ch
+	// sig := <-ch
 	
-	l.Println("Shutting Down... ",sig)
+	// l.Println("Shutting Down... ",sig)
 
-	Server.Shutdown(ctx)
+	// Server.Shutdown(ctx)
 
 }
 

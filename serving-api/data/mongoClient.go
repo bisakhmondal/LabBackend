@@ -3,6 +3,7 @@ package data
 import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"context"
+	
 )
 
 //MongoClient for Database handling.
@@ -18,3 +19,7 @@ func NewMongoClient(ct *context.Context, clt *mongo.Client) *MongoClient{
 		client: clt,
 	}
 }
+
+
+
+
