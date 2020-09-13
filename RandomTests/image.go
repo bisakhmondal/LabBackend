@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"bytes"
 	"fmt"
 	"image"
@@ -9,6 +10,8 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
+	"encoding/base64"
+	"strconv"
 )
 
 func main() {
@@ -17,6 +20,17 @@ func main() {
 
 	//fil,_ := os.Open("n.png")
 	fl2 ,_ := os.Create("nn.png")//os.Open("nn.png")
+
+
+	// Shuvayan test
+	f, _ := os.Open( "n.png")
+	readeree := bufio.NewReader(f)
+
+	content , _ := ioutil.ReadAll(readeree)
+
+	encoded := base64.StdEncoding.EncodeToString(content)
+
+	fmt.Println("Encoded : " + strconv.Itoa( len(encoded) ))
 
 	//Method 1
 	////byt := new(bytes.Buffer)
