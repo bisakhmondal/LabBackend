@@ -3,6 +3,8 @@ package data
 import (
 	"context"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/bson"
+	"time"
 )
 
 //MongoClient for Database handling.
@@ -38,3 +40,25 @@ func NewMongoClient(ct *context.Context, clt *mongo.Client) *MongoClient{
 //
 //	return personsData,nil
 //}
+
+
+func (p* MongoClient) CheckAuth(username string , password string , filter bson.M) ( *Person ,bool){
+	collection := p.client.Database("users").Collection("info")
+
+	ctx,cancel := context.WithTimeout(context.TODO(),10*time.Second)
+	defer cancel()
+
+	var person *Person
+
+	err := collection.FindOne(ctx , filter ).Decode(&person)
+	if  err != nil{
+		return nil ,false
+	}
+
+	return  person ,true
+
+
+
+
+
+}

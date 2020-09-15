@@ -23,14 +23,7 @@ func  checkGet( w http.ResponseWriter, r *http.Request) {
 
    w.Write([]byte("Hello World"))
 }
-//
-//
 
-// Test implementation of main
-
-//type logger struct{
-//    lo * log.Logger
-//}
 
 
 var (

@@ -7,6 +7,9 @@ import (
 	"net/http"
 	"os"
 	"time"
+	"go.mongodb.org/mongo-driver/bson"
+	
+
 )
 
 type SignIn struct {
@@ -40,6 +43,24 @@ func (l *SignIn)Signin( w http.ResponseWriter , r *http.Request){
 	//	http.Error( w , "Wrong Username or Password" , http.StatusBadRequest)
 	//	return
 	//}
+	
+
+	filter := bson.M{
+		"username":bson.D{{
+			"$in",
+			bson.A{creds.Username},
+		}},
+		"password": bson.D{{
+			"$in",
+			bson.A{creds.Password},
+		}},
+	}
+	person, found := l.db.CheckAuth( creds.Username , creds.Password , filter)
+	if !found{
+		http.Error(w ,"Not in Databse" , http.StatusBadRequest)
+		return
+	}
+	
 
 	sessionToken , err := createToken(creds.Username , creds.Password)
 	if err != nil{
