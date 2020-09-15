@@ -93,6 +93,7 @@ func (l *SignIn)Signin( w http.ResponseWriter , r *http.Request){
 		Name : "session_token",
 		Value : sessionToken,
 		Expires : time.Now().Add( 1 * time.Hour ),
+		HttpOnly: true,
 	})
 
 	w.WriteHeader(http.StatusOK)
@@ -105,7 +106,7 @@ func createToken( id string , username string ) ( string , error ){
 	claims["authorized"]=true
 	claims["id"]=id
 	claims["username"]=username
-	claims["exp"]=time.Now().Add(time.Hour * 1 ).Unix()
+	claims["expires"]=time.Now().Add(time.Hour * 1 ).Unix()
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString([]byte(os.Getenv("API_SECRET")))
 

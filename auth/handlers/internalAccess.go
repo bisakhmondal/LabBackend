@@ -13,7 +13,8 @@ func MiddlewareAuthenticate( next http.Handler ) http.Handler{
 	return http.HandlerFunc(func(rw http.ResponseWriter , r *http.Request){
 
 
-		_ , err := r.Cookie("session_token")
+		c , err := r.Cookie("session_token")
+
 		if err != nil {
 			if err == http.ErrNoCookie{
 				http.Error( rw ,"Unauthorized" , http.StatusUnauthorized)
@@ -22,6 +23,22 @@ func MiddlewareAuthenticate( next http.Handler ) http.Handler{
 			http.Error(rw ,"Bad Request" , http.StatusBadRequest )
 			return
 		}
+
+		sessionToken := c.Value
+		claims := jwt.MapClaims{}
+		_ , err = jwt.ParseWithClaims(sessionToken,  claims, func(token *jwt.Token) (interface{}, error) {
+			return []byte(os.Getenv("API_SECRET")), nil
+		})
+
+		if time.Now().Unix() > claims["expires"].(int64){
+			http.Error(rw ,"Unauthorized" , http.StatusBadRequest )
+			return
+		}
+
+
+		
+
+
 
 		next.ServeHTTP(rw ,r)
 	})
