@@ -11,12 +11,82 @@ import (
 	"time"
 )
 
-type user struct{
-	ID primitive.ObjectID `bson:"_id,omitempty"`
-	NAME string `bson:"name,omitempty"`
-	STREAM string `bson:"stream,omitempty"`
+// type user struct{
+// 	ID primitive.ObjectID `bson:"_id,omitempty"`
+// 	NAME string `bson:"name,omitempty"`
+// 	STREAM string `bson:"stream,omitempty"`
+// }
+
+type Project struct {
+	NAME string`bson:"name" json:"name"`
+	IMG []byte `bson:"img, omitempty" json:"img"`
 }
-type Users []user
+
+type Projects []*Project
+
+type Person struct {
+	ID primitive.ObjectID `bson:"_id,omitempty" `
+	NAME string `bson:"name" json:"name" validate:"required"`
+	EMAIL string `bson:"email" json:"email" validate:"email,required"`
+	EDUCATION []string `bson:"education, omitempty" json:"education"`
+	USERNAME string `bson:"username" json:"username"`
+	PASSWORD string `bson:"password" json:"-"`//hash String
+	ROUTE string `bson:"route" json:"route"`
+	SPECIALIZATION []string `bson:"specialization, omitempty" json:"specialization"` //Specialized Field
+	PROJECTS Projects `bson:"projects, omitempty" json:"projects"`
+	ACHIEVEMENTS []string `bson:"achievements, omitempty" json:"achievements"`
+}
+
+var PersonList = []Person{
+
+	Person{
+		NAME : "Shuvayan",
+		EMAIL : "papaigd@gmail.com",
+		EDUCATION : []string{"JU" , "HVM"},
+		USERNAME : "thesyncoder",
+		PASSWORD : "pass1",
+		ROUTE : "shuvayan",
+		SPECIALIZATION : []string{"CV"},
+		PROJECTS : Projects{
+			&Project{
+				NAME: "WOOW",
+			},
+			&Project{
+				NAME: "WOOW1",
+			},
+
+		},
+		ACHIEVEMENTS :[]string{"ACH1" ,"ACH2"},
+
+	},
+	Person{
+		NAME : "Bisakh",
+		EMAIL : "papaigd@gmail.com",
+		EDUCATION : []string{"JU" , "HVM"},
+		USERNAME : "thesyncoder",
+		PASSWORD : "pass1",
+		ROUTE : "bisakh",
+		SPECIALIZATION : []string{"CV"},
+		PROJECTS : Projects{
+			&Project{
+				NAME: "WOOW",
+			},
+			&Project{
+				NAME: "WOOW1",
+			},
+
+		},
+		ACHIEVEMENTS :[]string{"ACH1" ,"ACH2"},
+
+	},
+}
+
+/*unc ToInterface(data []*interface{}) []*interface{}{
+	for _,p :=range data{
+		pp:= p.(interface{})
+	}
+}*/
+// type Users []user
 func main(){
 	ctx, cancel := context.WithTimeout(context.Background(),10*time.Second)
 	defer cancel()
@@ -36,33 +106,38 @@ func main(){
 	coll := client.Database("users").Collection("info")
 
 	//Fetch
-	crsr,err :=coll.Find(ctx,bson.M{}) //query bson.M{"name":bson.M{"$eq":"Shuvayan"}}
+	//crsr,err :=coll.Find(ctx,bson.M{}) //query bson.M{"name":bson.M{"$eq":"Shuvayan"}}
 	
-	//inUser := user{
-	//	NAME:   "NewStudent",
-	//	STREAM: "PG",
-	//}
-	if err !=nil{
-		log.Fatal(err)
+	for _, P := range PersonList{
+		id,err := coll.InsertOne(ctx,P)
+		fmt.Println(err,id)
 	}
-	var data Users
 
-	err = crsr.All(ctx, &data); check(err)
-	log.Println(data)
+	// inUser := user{
+	// 	NAME:   "45NewStudent",
+	// 	// STREAM: "PG",
+	// }
+	// if err !=nil{
+	// 	log.Fatal(err)
+	// }
+	// var data Users
 
-	//Insert
-	//inserted,err := coll.InsertOne(ctx, inUser)
-	//
-	//check(err)
-	//log.Println(inserted)
+	// err = crsr.All(ctx, &data); check(err)
+	// log.Println(data)
+
+	// //Insert
+	// inserted,err := coll.InsertOne(ctx, inUser)
+	// //
+	// check(err)
+	// log.Println(inserted)
 	//selective fetch
 
-	 crs2,err := coll.Find(ctx,bson.M{}, options.Find().SetProjection(bson.M{"_id":0,"name":1}))
+	//  crs2,err := coll.Find(ctx,bson.M{}, options.Find().SetProjection(bson.M{"_id":0,"name":1}))
 
-	 var data2 Users
-	check(err)
-	err = crs2.All(ctx, &data2); check(err)
-	log.Println(data2)
+	//  var data2 Users
+	// check(err)
+	// err = crs2.All(ctx, &data2); check(err)
+	// log.Println(data2)
 
 }
 

@@ -11,14 +11,15 @@ import (
 	"image/jpeg"
 	_ "image/jpeg"
 	_ "image/png"
-	"io"
 	"io/ioutil"
 	"os"
+	// "io"
 )
 
 func main() {
 	width, height := getImageDimension("n.png")
 	fmt.Println("Width:", width, "Height:", height)
+
 
 	//fil,_ := os.Open("n.png")
 	//fl2 ,_ := os.Create("nn.png")//os.Open("nn.png")
@@ -59,19 +60,19 @@ func main() {
 	fil ,_ := os.Open("n.png")
 	//Resize + Compression
 	imgD,_,_ := image.Decode(fil)
-	imgD =resize.Resize(256,256,imgD,resize.Bilinear)
+	imgD =resize.Resize(768,768,imgD,resize.Lanczos2)
 	newByt := new(bytes.Buffer)
 
 	jpeg.Encode(newByt,imgD,nil)
-	ff , _ := os.Create("resizeN.png")
-	io.Copy(ff,bytes.NewReader(newByt.Bytes()))
+	// ff , _ := os.Create("resizeN.png")
+	// io.Copy(ff,bytes.NewReader(newByt.Bytes()))
 	//Compress BYTES
 	wrt := new(bytes.Buffer)
 	gw,_ := gzip.NewWriterLevel(wrt, gzip.BestCompression)
 	gw.Write(newByt.Bytes())
 	newencoded := base64.StdEncoding.EncodeToString(wrt.Bytes())
 	fmt.Println("New Encoding", len(newencoded),"saved len: ",len(encoded)-len(newencoded))
-
+	// fmt.Println(newencoded)
 	//reader := bytes.NewReader(byt)
 	// n,_ := io.Copy(fl2,reader)
 	// fmt.Println(n)

@@ -41,7 +41,7 @@ func New(smux *mux.Router, bindAddress string) *http.Server{
 		Addr : bindAddress,
 		Handler: corsH(smux),
 		TLSConfig: tlsConfig,
-		ReadTimeout: 5*time.Second,
+		ReadTimeout: 8*time.Second,
 		WriteTimeout: 10*time.Second,
 		IdleTimeout: 300*time.Second,
 	}

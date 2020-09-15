@@ -12,6 +12,7 @@ import (
 	"os"
 	"os/signal"
 	"serving-api/data"
+	"serving-api/handlers"
 	"serving-api/server"
 	"time"
 )
@@ -44,22 +45,15 @@ func main(){
 	defer client.Disconnect(ctx)
 
 	//wrapped mongo client
-	mclient := data.NewMongoClient(&ctx, client)
+	dbclient := data.NewMongoClient(&ctx, client)
 
-	//just testing
-	log.Println(mclient)
+	pHandler := handlers.NewPersonH(dbclient,l)
 
 	//Gorilla router
 	smux := mux.NewRouter()
 
 	getRouter := smux.Methods(http.MethodGet).Subrouter()
-	getRouter.HandleFunc("/",func(rw http.ResponseWriter, r* http.Request){
-		rw.Header().Set("Content-Type","text/plain; charset=utf-8")
-
-		l.Println("Received on ROute '/' ")
-		rw.WriteHeader(http.StatusOK)
-		rw.Write([]byte("Hello WOrLd"))
-	})
+	getRouter.HandleFunc("/", pHandler.GetData)
 
 	//Create a new tls server
 	Server := server.New(smux, *bindAddress)
