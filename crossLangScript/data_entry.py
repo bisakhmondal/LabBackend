@@ -73,6 +73,17 @@ person.update(
 # idd = coll.insert_one()
 
 
+#write Password at file "hash.txt"
+
+#Hash calculation done
+from ctypes import *
+
+hash = cdll.LoadLibrary('./hash.so')
+hash.GETHASH()
+
+#Read Hash from "hash.txt"
+
+
 doc ={}
 for k , v in vars(person).items():
     doc[k]=v
