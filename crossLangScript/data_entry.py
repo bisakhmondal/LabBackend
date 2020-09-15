@@ -1,3 +1,4 @@
+import sys
 import pymongo
 from pymongo import collection
 MONGO_URI = 'mongodb+srv://cmater:dvlp@cluster0.j4fgv.gcp.mongodb.net/users?retryWrites=true&w=majority'
@@ -61,7 +62,7 @@ person = Person()
 person.update(
     name= 'Shuvayan',
     email = 'sgd030@gmail.com',
-    username= 'shuvayan',
+    username= 'nibba',
     password = 'pass123' ,
     route = 'shuvayan',
     education = ['HVM' , 'JU'],
@@ -70,8 +71,17 @@ person.update(
     projects = [{'name':'pro1' , 'img':'im1'} , {'name':'pro2' , 'img':'im2' } , {'name':'pro3'}]
 )
 
-# idd = coll.insert_one()
+doc ={}
+for k , v in vars(person).items():
+    doc[k]=v
+del doc['_id']
 
+
+# write password in hash.txt
+
+with open('hash.txt' , 'w') as f:
+    f.write(doc['password'])
+f.close()
 
 #write Password at file "hash.txt"
 
@@ -82,17 +92,29 @@ hash = cdll.LoadLibrary('./hash.so')
 hash.GETHASH()
 
 #Read Hash from "hash.txt"
+with open('hash.txt', 'r') as f:
+    hash = f.read().strip()
+f.close()
 
 
-doc ={}
-for k , v in vars(person).items():
-    doc[k]=v
-del doc['_id']
+print('famous hash : ', hash)
 
-# idd = coll.insert_one(doc).inserted_id
+doc['password']=hash
 
-ob = coll.find_one( {"name":"Shuvayan", "email" : "sgd030@gmail.com"})
-print(ob)
+
+
+
+
+
+if coll.find_one({"username":doc['username']}) is not None:
+    sys.exit()
+
+
+idd = coll.insert_one(doc).inserted_id
+print(idd)
+
+# ob = coll.find_one( {"name":"Shuvayan", "email" : "sgd030@gmail.com"})
+# print(ob)
 
 
 
