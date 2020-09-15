@@ -2,8 +2,9 @@ package data
 
 import (
 	"context"
-	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"time"
 )
 
@@ -41,24 +42,40 @@ func NewMongoClient(ct *context.Context, clt *mongo.Client) *MongoClient{
 //	return personsData,nil
 //}
 
-
-func (p* MongoClient) CheckAuth(username string , password string , filter bson.M) ( *Person ,bool){
+//Authentication route.
+func (p* MongoClient) CheckAuth(personData *Person, filter *bson.M) error{
 	collection := p.client.Database("users").Collection("info")
 
-	ctx,cancel := context.WithTimeout(context.TODO(),10*time.Second)
+	ctx, cancel := context.WithTimeout(context.TODO(), 5*time.Second)
 	defer cancel()
 
-	var person *Person
+	option := options.FindOne().SetProjection(bson.M{
+		"username":1,
+		"password":1,
+	})
 
-	err := collection.FindOne(ctx , filter ).Decode(&person)
-	if  err != nil{
-		return nil ,false
+	err := collection.FindOne(ctx , filter, option).Decode(personData)
+	if  err != nil {
+		return err
 	}
 
-	return  person ,true
+	return nil
+}
 
+//Update Database.
+func (p* MongoClient)UpdateDB(personData *Person)error{
+	coll := p.client.Database("users").Collection("info")
 
+	ctx,cancel := context.WithTimeout(context.TODO(),5*time.Second)
+	defer cancel()
 
+	filter := bson.M{"_id":personData.ID}
+	update,err := personData.ToBSON()
 
+	if err!=nil{
+		return err
+	}
+	_ = coll.FindOneAndUpdate(ctx,filter, bson.M{"$set":update})
 
+	return nil
 }
