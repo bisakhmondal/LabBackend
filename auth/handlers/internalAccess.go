@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"github.com/dgrijalva/jwt-go"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"log"
 	"net/http"
 	"os"
@@ -27,6 +28,29 @@ func MiddlewareAuthenticate( next http.Handler ) http.Handler{
 }
 
 
+func ParseCookie(r * http.Request) (*primitive.ObjectID,error){
+	c, err := r.Cookie("session_token")
+	if err != nil {
+		return nil,err
+	}
+	sessionToken := c.Value
+	claims := jwt.MapClaims{}
+	_ , err = jwt.ParseWithClaims(sessionToken,  claims, func(token *jwt.Token) (interface{}, error) {
+		return []byte(os.Getenv("API_SECRET")), nil
+	})
+
+	if err!=nil{
+		return nil,err
+	}
+	id, err := primitive.ObjectIDFromHex(claims["id"].(string))
+
+	if err !=nil{
+		return nil, err
+	}
+
+	return &id,nil
+}
+
 func Refresh(w http.ResponseWriter, r *http.Request) {
 
 	log.Printf("GET %s\n" , r.RequestURI)
@@ -50,7 +74,7 @@ func Refresh(w http.ResponseWriter, r *http.Request) {
 		http.Error(w , "Wrong token signature",  http.StatusBadRequest)
 		return
 	}
-	newSessionToken , err := createToken( claims["name"].(string) , claims["password"].(string))
+	newSessionToken , err := createToken( claims["id"].(string) , claims["username"].(string))
 	if err != nil{
 		http.Error( w , "Cannot create token" , http.StatusBadRequest)
 		return

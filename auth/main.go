@@ -57,20 +57,23 @@ func main(){
 
 
 	SignInHan := handlers.NewSignIn(dbclient,l)
-
+	UpdateHan := handlers.NewUpdateH(dbclient,l)
     sm := mux.NewRouter()
 
     loginRouter := sm.Methods( http.MethodPost).Subrouter()
     loginRouter.HandleFunc("/login" , SignInHan.Signin)
 
-    getRouter := sm.Methods( http.MethodGet ).Subrouter()
+    getRouter := sm.Methods(http.MethodGet ).Subrouter()
     getRouter.HandleFunc( "/" , checkGet )
+
+    updateRouter :=sm.Methods(http.MethodPut).Subrouter()
+    updateRouter.HandleFunc("/update", UpdateHan.Update)
 
 	server := server.New(sm,*bindAddress)
 
     // start the server
 	go func() {
-		l.Println("Starting server on port 9090")
+		l.Println("Starting server on port ",*bindAddress)
 
 		err := server.ListenAndServeTLS(certFile,certKey)
 		if err != nil {

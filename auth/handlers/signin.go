@@ -3,13 +3,13 @@ package handlers
 import (
 	"auth/data"
 	"github.com/dgrijalva/jwt-go"
+	"go.mongodb.org/mongo-driver/bson"
+	"golang.org/x/crypto/bcrypt"
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"time"
-	"go.mongodb.org/mongo-driver/bson"
-	
-
 )
 
 type SignIn struct {
@@ -45,29 +45,39 @@ func (l *SignIn)Signin( w http.ResponseWriter , r *http.Request){
 	//}
 	
 
-	filter := bson.M{
-		"username":bson.D{{
-			"$in",
-			bson.A{creds.Username},
-		}},
-		"password": bson.D{{
-			"$in",
-			bson.A{creds.Password},
-		}},
-	}
-	person, found := l.db.CheckAuth( creds.Username , creds.Password , filter)
-	if !found{
-		http.Error(w ,"Not in Databse" , http.StatusBadRequest)
+	filter := &bson.M{
+		"username":bson.M{
+			"$eq":creds.Username,
+		}}
+
+	var user data.Person
+
+	//Get User Details
+	err = l.db.CheckAuth( &user, filter)
+	if err!=nil{
+		http.Error(w ,"Not in Database" , http.StatusBadRequest)
 		return
 	}
-	
 
-	sessionToken , err := createToken(creds.Username , creds.Password)
+	//log.Println(user)
+
+	//Check Password
+	err = bcrypt.CompareHashAndPassword([]byte(user.PASSWORD), []byte(creds.Username))
+
+	if err!=nil{
+		http.Error(w, "Incorrect Password", http.StatusBadRequest)
+		return
+	}
+
+	//All Validated: Generate Cookie
+	id := strings.Split(user.ID.String(),"(\"")[1]
+	id = id[:len(id)-2]
+
+	sessionToken , err := createToken(id, user.USERNAME)
 	if err != nil{
 		http.Error( w , "Cannot create token" , http.StatusBadRequest)
 		return
 	}
-
 
 	//TODO : Implement Redis layer
 
@@ -85,17 +95,18 @@ func (l *SignIn)Signin( w http.ResponseWriter , r *http.Request){
 		Expires : time.Now().Add( 1 * time.Hour ),
 	})
 
-
+	w.WriteHeader(http.StatusOK)
+	//For testing
+	w.Write([]byte(user.USERNAME))
 }
 
-func createToken( name string , password string ) ( string , error ){
+func createToken( id string , username string ) ( string , error ){
 	claims := jwt.MapClaims{}
 	claims["authorized"]=true
-	claims["name"]=name
-	claims["password"]=password
+	claims["id"]=id
+	claims["username"]=username
 	claims["exp"]=time.Now().Add(time.Hour * 1 ).Unix()
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString([]byte(os.Getenv("API_SECRET")))
 
 }
-
