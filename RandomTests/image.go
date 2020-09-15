@@ -73,7 +73,7 @@ func main() {
 	newencoded := base64.StdEncoding.EncodeToString(wrt.Bytes())
 	fmt.Println("New Encoding", len(newencoded),"saved len: ",len(encoded)-len(newencoded))
 	// fmt.Println(newencoded)
-	//reader := bytes.NewReader(byt)
+	// reader := bytes.NewReader(byt)
 	// n,_ := io.Copy(fl2,reader)
 	// fmt.Println(n)
 	// fl2.Close()
