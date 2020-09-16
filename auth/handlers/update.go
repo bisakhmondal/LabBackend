@@ -48,3 +48,47 @@ func (p *UpdateH)Update(rw http.ResponseWriter, r *http.Request){
 
 	rw.WriteHeader(http.StatusOK)
 }
+
+//Update Image through form data.
+
+func (p *UpdateH)UploadImage(rw http.ResponseWriter, r* http.Request){
+	err := r.ParseMultipartForm(1024*1024)
+
+	if err!=nil{
+		http.Error(rw, "Unable to Parse Form data", http.StatusBadRequest)
+		return
+	}
+
+	// will check for with frontend..
+	//id,err := ParseCookie(r)
+	id, err := primitive.ObjectIDFromHex("5f5cd403a819ad84f8cdfc97")
+
+	if err !=nil{
+		http.Error(rw, "Unable to Parse Cookie", http.StatusNetworkAuthenticationRequired)
+		p.l.Println(err)
+		return
+	}
+	image,_,err := r.FormFile("file")
+
+	if err!=nil{
+		http.Error(rw, "Invalid file format", http.StatusBadRequest)
+		p.l.Println(err)
+		return
+	}
+
+	strImg, err := ParseImage(image)
+	if err !=nil{
+		http.Error(rw, "Internal error", http.StatusInternalServerError)
+		p.l.Println(err)
+		return
+	}
+	//log.Println("encoded String", len(strImg))
+
+	var user data.Person
+	user.ID=id
+	user.PROFILE= strImg
+
+	p.db.UpdateDB(&user)
+
+	rw.WriteHeader(http.StatusOK)
+}

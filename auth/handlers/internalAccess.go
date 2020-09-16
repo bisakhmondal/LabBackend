@@ -27,7 +27,7 @@ func MiddlewareAuthenticate( next http.Handler ) http.Handler{
 	})
 }
 
-
+// Always Fetch the userID from http-only cookie.
 func ParseCookie(r * http.Request) (*primitive.ObjectID,error){
 	c, err := r.Cookie("session_token")
 	if err != nil {
