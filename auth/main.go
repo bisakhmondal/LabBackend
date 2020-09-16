@@ -68,6 +68,7 @@ func main(){
 
     updateRouter :=sm.Methods(http.MethodPut).Subrouter()
     updateRouter.HandleFunc("/update", UpdateHan.Update)
+    updateRouter.HandleFunc("/update-image",UpdateHan.UploadImage)
 
 	server := server.New(sm,*bindAddress)
 

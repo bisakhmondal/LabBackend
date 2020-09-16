@@ -21,6 +21,7 @@ type Person struct {
 	USERNAME string `bson:"username" json:"-"`
 	PASSWORD string `bson:"password" json:"-"`//hash String
 	ROUTE string `bson:"route" json:"route"`
+	PROFILE string `bson:"profile,omitempty" json:"profile"`
 	SPECIALIZATION []string `bson:"specialization, omitempty" json:"specialization"` //Specialized Field
 	PROJECTS Projects `bson:"projects,omitempty" json:"projects"`
 	ACHIEVEMENTS []string `bson:"achievements,omitempty" json:"achievements"`
