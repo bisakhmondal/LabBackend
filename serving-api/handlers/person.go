@@ -1,9 +1,11 @@
 package handlers
 
 import (
+	"github.com/gorilla/mux"
 	"log"
 	"net/http"
 	"serving-api/data"
+	"strings"
 )
 
 type PersonH struct{
@@ -32,10 +34,30 @@ func (p *PersonH)GetData(rw http.ResponseWriter, r* http.Request) {
 	err = personData.ToJSON(rw)
 
 	if err!=nil{
-		http.Error(rw,"Unable to Process Data", http.StatusNotFound)
+		http.Error(rw,"Unable to Process Data", http.StatusInternalServerError)
 		p.l.Println("Can't Marshal data")
 		return
 	}
 	rw.WriteHeader(http.StatusOK)
 	rw.Header().Set("Content-Type","application/json")
+}
+
+func (p* PersonH)FetchUser(rw http.ResponseWriter, r* http.Request){
+	vars := mux.Vars(r)
+	route := strings.ToLower(vars["route"])
+
+	user,err := p.dbClient.FindUser(&route)
+
+	if err!=nil{
+		http.Error(rw, "Bad Route", http.StatusBadGateway)
+		return
+	}
+	err = user.ToJSON(rw)
+	if err!=nil{
+		http.Error(rw, "Unable to Process data", http.StatusInternalServerError)
+		p.l.Println("unable to marshal json")
+	}
+
+	rw.WriteHeader(http.StatusOK)
+	rw.Header().Set("Content-Type", "application/json")
 }

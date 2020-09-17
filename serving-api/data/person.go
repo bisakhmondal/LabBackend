@@ -32,3 +32,8 @@ func (p Plist) ToJSON(w io.Writer)error{
 	e := json.NewEncoder(w)
 	return e.Encode(p)
 }
+
+func (p *Person) ToJSON(w io.Writer)error{
+	e := json.NewEncoder(w)
+	return e.Encode(p)
+}

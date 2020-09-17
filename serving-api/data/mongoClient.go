@@ -41,3 +41,22 @@ func (p* MongoClient)GetData() (Plist, error){
 
 	return personsData,nil
 }
+
+func (p* MongoClient)FindUser(route *string) (*Person,error){
+
+	coll := p.client.Database("users").Collection("info")
+	ctx,cancel := context.WithTimeout(context.TODO(), 5*time.Second)
+	defer cancel()
+	var personData Person
+
+	err := coll.FindOne(
+		ctx,
+		bson.M{"route":route},
+		options.FindOne().SetProjection(bson.M{"_id":0}),
+	).Decode(&personData)
+
+	if err!=nil{
+		return nil,err
+	}
+	return &personData, nil
+}

@@ -54,6 +54,7 @@ func main(){
 
 	getRouter := smux.Methods(http.MethodGet).Subrouter()
 	getRouter.HandleFunc("/", pHandler.GetData)
+	getRouter.HandleFunc("/user/{route:[a-zA-Z0-9]+}", pHandler.FetchUser)
 
 	//Create a new tls server
 	Server := server.New(smux, *bindAddress)
