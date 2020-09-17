@@ -2,3 +2,9 @@ config.yaml
 # mongo secret key
 tests/
 .idea/
+
+#TLS
+ca.key
+ca.crt
+ca.srl
+server.csr
