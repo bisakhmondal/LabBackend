@@ -41,10 +41,17 @@ func MiddlewareAuthenticate( next http.Handler ) http.Handler{
 
 func CorsMiddleware( next http.Handler ) http.Handler{
 	return http.HandlerFunc( func(rw  http.ResponseWriter , r *http.Request ){
-		rw.Header().Set("Access-Control-Allow-Origin", "http://34.83.188.4:3000")
+		origin := r.Header.Get("Origin");
+		
+		rw.Header().Set("Access-Control-Allow-Origin", origin )
     	rw.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
     	rw.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token")
-    	rw.Header().Set("Access-Control-Allow-Credentials", "true")
+		rw.Header().Set("Access-Control-Allow-Credentials", "true")
+		
+		headers := rw.Header()
+		headers.Add("Vary", "Origin")
+		headers.Add("Vary", "Access-Control-Request-Method")
+		headers.Add("Vary", "Access-Control-Request-Headers")
 	})
 }
 

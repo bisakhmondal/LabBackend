@@ -64,9 +64,10 @@ func main(){
 	UpdateHan := handlers.NewUpdateH(dbclient,l)
     sm := mux.NewRouter()
 
-    loginRouter := sm.Methods( http.MethodPost).Subrouter()
+	loginRouter := sm.Methods( http.MethodPost).Subrouter()
+	// loginRouter.Use(handlers.CorsMiddleware)
 	loginRouter.HandleFunc("/login" , SignInHan.Signin)
-	loginRouter.Use(handlers.CorsMiddleware)
+	
 	
 
     getRouter := sm.Methods(http.MethodGet ).Subrouter()
@@ -76,7 +77,7 @@ func main(){
     updateRouter :=sm.Methods(http.MethodPut).Subrouter()
     updateRouter.HandleFunc("/update", UpdateHan.Update)
 	updateRouter.HandleFunc("/update-image",UpdateHan.UploadImage)
-	updateRouter.Use(handlers.CorsMiddleware)
+	// updateRouter.Use(handlers.CorsMiddleware)
 
 	server := server.New(sm,bindAddress)
 
