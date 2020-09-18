@@ -3,7 +3,7 @@ package server
 import (
 	"time"
 	"crypto/tls"
-	"github.com/gorilla/handlers"
+	// "github.com/gorilla/handlers"
 	"net/http"
 	"github.com/gorilla/mux"
 )
