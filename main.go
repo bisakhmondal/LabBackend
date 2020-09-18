@@ -18,6 +18,7 @@ import (
 	"os"
 	"os/signal"
 	"time"
+	
 )
 
 func  checkGet( w http.ResponseWriter, r *http.Request) {
@@ -62,7 +63,9 @@ func main(){
 
 	SignInHan := handlers.NewSignIn(dbclient,l)
 	UpdateHan := handlers.NewUpdateH(dbclient,l)
-    sm := mux.NewRouter()
+	sm := mux.NewRouter()
+	
+	
 
 	loginRouter := sm.Methods( http.MethodPost).Subrouter()
 	// loginRouter.Use(handlers.CorsMiddleware)
@@ -78,6 +81,9 @@ func main(){
     updateRouter.HandleFunc("/update", UpdateHan.Update)
 	updateRouter.HandleFunc("/update-image",UpdateHan.UploadImage)
 	// updateRouter.Use(handlers.CorsMiddleware)
+
+
+	
 
 	server := server.New(sm,bindAddress)
 

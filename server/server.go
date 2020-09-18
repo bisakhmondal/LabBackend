@@ -3,9 +3,10 @@ package server
 import (
 	"time"
 	"crypto/tls"
-	"github.com/gorilla/handlers"
+	
 	"net/http"
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 )
 
 //New Server
@@ -13,7 +14,11 @@ func New(smux *mux.Router, bindAddress string) *http.Server{
 	//cors
 	// corsH := handlers.CORS(handlers.AllowedOrigins([]string{"*"}))
 
-	corsH := handlers.CORS(handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}), handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS"}), handlers.AllowedOrigins([]string{"http://34.83.188.4:3000"}))
+	// corsH := handlers.CORS(handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}), handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS"}), handlers.AllowedOrigins([]string{"http://34.83.188.4:3000"}))
+	corsH := cors.New(cors.Options{
+        AllowedOrigins: []string{"http://34.83.188.4:3000,http://34.83.188.4"},
+        AllowCredentials: true,
+    })
 
 	// tls Configuration
 	tlsConfig := & tls.Config{
@@ -41,7 +46,7 @@ func New(smux *mux.Router, bindAddress string) *http.Server{
 	server := &http.Server{
 
 		Addr : bindAddress,
-		Handler: corsH(smux),
+		Handler: corsH.Handler(smux),
 		TLSConfig: tlsConfig,
 		ReadTimeout: 8*time.Second,
 		WriteTimeout: 10*time.Second,
