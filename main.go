@@ -46,7 +46,7 @@ func main(){
 	ctx, cancel := context.WithTimeout(context.Background(),10*time.Second)
 	defer cancel()
 
-	URI := getURI("MONGO")
+	URI := "mongodb+srv://cmater:dvlp@cluster0.j4fgv.gcp.mongodb.net/users?retryWrites=true&w=majority"
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(URI))
 
 	if err !=nil{
