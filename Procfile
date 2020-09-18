@@ -1,1 +1,1 @@
-web: auth/
+web: bin/LabBackend
