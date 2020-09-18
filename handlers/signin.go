@@ -98,6 +98,7 @@ func (l *SignIn)Signin( w http.ResponseWriter , r *http.Request){
 		HttpOnly: true,
 	})
     w.Header().Set("Access-Control-Allow-Origin", "*")
+    w.Header().Set("Access-Control-Allow-Credentials", "true")
 	w.WriteHeader(http.StatusOK)
 	//For testing
 	w.Write([]byte(user.USERNAME))
