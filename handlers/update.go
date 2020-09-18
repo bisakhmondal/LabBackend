@@ -45,7 +45,7 @@ func (p *UpdateH)Update(rw http.ResponseWriter, r *http.Request){
 		http.Error(rw, "Unable to Update", http.StatusBadRequest)
 		return
 	}
-        rw.Header().Set("Access-Control-Allow-Origin", "*")
+    
 	rw.WriteHeader(http.StatusOK)
 }
 
@@ -89,6 +89,6 @@ func (p *UpdateH)UploadImage(rw http.ResponseWriter, r* http.Request){
 	user.PROFILE= strImg
 
 	p.db.UpdateDB(&user)
-        rw.Header().Set("Access-Control-Allow-Origin", "*")
+
 	rw.WriteHeader(http.StatusOK)
 }

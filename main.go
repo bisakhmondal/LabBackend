@@ -65,14 +65,18 @@ func main(){
     sm := mux.NewRouter()
 
     loginRouter := sm.Methods( http.MethodPost).Subrouter()
-    loginRouter.HandleFunc("/login" , SignInHan.Signin)
+	loginRouter.HandleFunc("/login" , SignInHan.Signin)
+	loginRouter.Use(handlers.CorsMiddleware)
+	
 
     getRouter := sm.Methods(http.MethodGet ).Subrouter()
-    getRouter.HandleFunc( "/" , checkGet )
+	getRouter.HandleFunc( "/" , checkGet )
+	
 
     updateRouter :=sm.Methods(http.MethodPut).Subrouter()
     updateRouter.HandleFunc("/update", UpdateHan.Update)
-    updateRouter.HandleFunc("/update-image",UpdateHan.UploadImage)
+	updateRouter.HandleFunc("/update-image",UpdateHan.UploadImage)
+	updateRouter.Use(handlers.CorsMiddleware)
 
 	server := server.New(sm,bindAddress)
 

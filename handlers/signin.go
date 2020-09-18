@@ -98,10 +98,7 @@ func (l *SignIn)Signin( w http.ResponseWriter , r *http.Request){
 		HttpOnly: true,
 	})
 	// origin := r.Header.Get("Origin")
-    w.Header().Set("Access-Control-Allow-Origin", "*")
-    w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-    w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token")
-    w.Header().Set("Access-Control-Allow-Credentials", "true")
+    
 	
 	w.WriteHeader(http.StatusOK)
 	//For testing
