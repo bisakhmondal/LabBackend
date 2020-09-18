@@ -13,7 +13,7 @@ func New(smux *mux.Router, bindAddress string) *http.Server{
 	//cors
 	// corsH := handlers.CORS(handlers.AllowedOrigins([]string{"*"}))
 
-	corsH := handlers.CORS(handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}), handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS"}), handlers.AllowedOrigins([]string{"*"}))
+	corsH := handlers.CORS(handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}), handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS"}), handlers.AllowedOrigins([]string{"34.83.188.4","34.83.188.4:3000","127.0.0.1"}))
 
 
 	
