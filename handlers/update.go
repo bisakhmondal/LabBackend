@@ -89,6 +89,6 @@ func (p *UpdateH)UploadImage(rw http.ResponseWriter, r* http.Request){
 	user.PROFILE= strImg
 
 	p.db.UpdateDB(&user)
-        w.Header().Set("Access-Control-Allow-Origin", "*")
+        rw.Header().Set("Access-Control-Allow-Origin", "*")
 	rw.WriteHeader(http.StatusOK)
 }
