@@ -97,7 +97,7 @@ func (l *SignIn)Signin( w http.ResponseWriter , r *http.Request){
 		Expires : time.Now().Add( 1 * time.Hour ),
 		HttpOnly: true,
 	})
-    w.Header().Set("Access-Control-Allow-Origin", "*")
+    w.Header().Set("Access-Control-Allow-Origin", "http://34.83.188.4")
     w.Header().Set("Access-Control-Allow-Credentials", "true")
 	w.WriteHeader(http.StatusOK)
 	//For testing
