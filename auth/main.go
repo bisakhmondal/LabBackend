@@ -5,6 +5,8 @@ import (
 	"auth/handlers"
 	"auth/server"
 	"context"
+	"fmt"
+
 	//gohandlers "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/nicholasjackson/env"
@@ -27,9 +29,11 @@ func  checkGet( w http.ResponseWriter, r *http.Request) {
 
 
 var (
-	bindAddress = env.String("BIND_ADDRESS",false,":9090","bind address for server")
+	//bindAddress = env.String("BIND_ADDRESS",false,":9090","bind address for server")
 	certFile = os.Getenv("CertFile")
 	certKey = os.Getenv("CertKey")
+	bindAddress = GetPort()
+
 )
 func main(){
     env.Parse()
@@ -70,11 +74,11 @@ func main(){
     updateRouter.HandleFunc("/update", UpdateHan.Update)
     updateRouter.HandleFunc("/update-image",UpdateHan.UploadImage)
 
-	server := server.New(sm,*bindAddress)
+	server := server.New(sm,bindAddress)
 
     // start the server
 	go func() {
-		l.Println("Starting server on port ",*bindAddress)
+		l.Println("Starting server on port ",bindAddress)
 
 		err := server.ListenAndServe()//TLS(certFile,certKey)
 		if err != nil {
@@ -116,3 +120,12 @@ func getURI(key string) string{
 	return value
 }
 
+func GetPort() string {
+	 	var port = os.Getenv("PORT")
+	 	// Set a default port if there is nothing in the environment
+	 	if port == "" {
+	 		port = "4747"
+	 		fmt.Println("INFO: No PORT environment variable detected, defaulting to " + port)
+	 	}
+		return ":" + port
+	}
