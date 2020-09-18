@@ -50,6 +50,7 @@ func (p* PersonH)FetchUser(rw http.ResponseWriter, r* http.Request){
 
 	if err!=nil{
 		http.Error(rw, "Bad Route", http.StatusBadGateway)
+		p.l.Println(err)
 		return
 	}
 	err = user.ToJSON(rw)

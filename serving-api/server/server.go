@@ -9,7 +9,7 @@ import (
 )
 
 //New Server
-func New(smux *mux.Router, bindAddress string) *http.Server{
+func New(smux *mux.Router, bindAddress string, hts bool) *http.Server{
 	//cors
 	corsH := handlers.CORS(handlers.AllowedOrigins([]string{"*"}))
 
@@ -36,15 +36,28 @@ func New(smux *mux.Router, bindAddress string) *http.Server{
 
 	}
 	//basic server
-	server := &http.Server{
+	var server *http.Server
+	if hts==true {
+		server = &http.Server{
 
-		Addr : bindAddress,
-		Handler: corsH(smux),
-		TLSConfig: tlsConfig,
-		ReadTimeout: 8*time.Second,
-		WriteTimeout: 10*time.Second,
-		IdleTimeout: 300*time.Second,
+			Addr:         bindAddress,
+			Handler:      corsH(smux),
+			TLSConfig:    tlsConfig,
+			ReadTimeout:  8 * time.Second,
+			WriteTimeout: 10 * time.Second,
+			IdleTimeout:  300 * time.Second,
+		}
+	}else{
+		server = &http.Server{
+
+			Addr:         bindAddress,
+			Handler:      corsH(smux),
+			ReadTimeout:  8 * time.Second,
+			WriteTimeout: 10 * time.Second,
+			IdleTimeout:  300 * time.Second,
+		}
 	}
+
 
 	return server
 }

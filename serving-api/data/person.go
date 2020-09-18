@@ -6,12 +6,12 @@ import (
 	"io"
 )
 
-type Project struct {
-	NAME string`bson:"name" json:"name"`
-	IMG string `bson:"img, omitempty" json:"img"`
-}
-
-type Projects []*Project
+//type Project struct {
+//	NAME string`bson:"name" json:"name"`
+//	IMG string `bson:"img, omitempty" json:"img"`
+//}
+//
+//type Projects []*Project
 
 type Person struct {
 	ID primitive.ObjectID `bson:"_id,omitempty" json:"-"`
@@ -23,7 +23,7 @@ type Person struct {
 	ROUTE string `bson:"route" json:"route"`
 	PROFILE string `bson:"profile,omitempty" json:"profile"`
 	SPECIALIZATION []string `bson:"specialization, omitempty" json:"specialization"` //Specialized Field
-	PROJECTS Projects `bson:"projects,omitempty" json:"projects"`
+	PROJECTS []string `bson:"projects,omitempty" json:"projects"`
 	ACHIEVEMENTS []string `bson:"achievements,omitempty" json:"achievements"`
 }
 

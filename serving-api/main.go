@@ -20,6 +20,7 @@ import (
 
 var (
 	bindAddress = env.String("BIND_ADDRESS",false,":8080","bind address for server")
+	bindAddress2 = env.String("BIND_ADDRESS",false,":9090","bind address for server")
 	certFile = os.Getenv("CertFile")
 	certKey = os.Getenv("CertKey")
 )
@@ -57,14 +58,26 @@ func main(){
 	getRouter.HandleFunc("/user/{route:[a-zA-Z0-9]+}", pHandler.FetchUser)
 
 	//Create a new tls server
-	Server := server.New(smux, *bindAddress)
+	Server := server.New(smux,*bindAddress,true)
+	//Create a new http Server
+	Serverhttp :=server.New(smux,*bindAddress2,false)
 
 	//starting server
 	go func(){
-		l.Println("starting at Port: ",*bindAddress)
+		l.Println("HTTPS starting at Port: ",*bindAddress)
 
 		err := Server.ListenAndServeTLS(certFile, certKey)
 		
+		if err!=nil{
+			l.Fatal("Server starting Failed",err)
+		}
+	}()
+
+	go func(){
+		l.Println("HTTP starting at Port: ",*bindAddress2)
+
+		err := Serverhttp.ListenAndServe()
+
 		if err!=nil{
 			l.Fatal("Server starting Failed",err)
 		}
@@ -80,6 +93,7 @@ func main(){
 	l.Println("Shutting Down... ",sig)
 
 	Server.Shutdown(ctx)
+	Serverhttp.Shutdown(ctx)
 
 }
 
