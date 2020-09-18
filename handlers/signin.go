@@ -35,13 +35,6 @@ func (l *SignIn)Signin( w http.ResponseWriter , r *http.Request){
 		return
 	}
 
-	//TODO:: ReWRITE FROM DB
-	//var id string
-	//expectedPassword , ok  := users[creds.Username]
-	//if !ok  || expectedPassword != creds.Password{
-	//	http.Error( w , "Wrong Username or Password" , http.StatusBadRequest)
-	//	return
-	//}
 	
 
 	filter := &bson.M{
@@ -97,7 +90,7 @@ func (l *SignIn)Signin( w http.ResponseWriter , r *http.Request){
 		Expires : time.Now().Add( 1 * time.Hour ),
 		HttpOnly: true,
 	})
-	// origin := r.Header.Get("Origin")
+	
     
 	
 	w.WriteHeader(http.StatusOK)
