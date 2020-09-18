@@ -97,8 +97,11 @@ func (l *SignIn)Signin( w http.ResponseWriter , r *http.Request){
 		Expires : time.Now().Add( 1 * time.Hour ),
 		HttpOnly: true,
 	})
-    w.Header().Set("Access-Control-Allow-Origin", "http://34.83.188.4")
+	origin := r.Header.Get("Origin")
+    w.Header().Set("Access-Control-Allow-Origin", origin)
     w.Header().Set("Access-Control-Allow-Credentials", "true")
+	w.Header().Set("Access-Control-Allow-Methods", "GET,POST,PUT")
+	
 	w.WriteHeader(http.StatusOK)
 	//For testing
 	w.Write([]byte(user.USERNAME))
