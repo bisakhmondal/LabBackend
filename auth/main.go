@@ -76,7 +76,7 @@ func main(){
 	go func() {
 		l.Println("Starting server on port ",*bindAddress)
 
-		err := server.ListenAndServeTLS(certFile,certKey)
+		err := server.ListenAndServe()//TLS(certFile,certKey)
 		if err != nil {
 			l.Printf("Error starting server: %s\n", err)
 			os.Exit(1)

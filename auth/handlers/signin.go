@@ -4,7 +4,6 @@ import (
 	"auth/data"
 	"github.com/dgrijalva/jwt-go"
 	"go.mongodb.org/mongo-driver/bson"
-	"golang.org/x/crypto/bcrypt"
 	"log"
 	"net/http"
 	"os"
@@ -30,7 +29,7 @@ func (l *SignIn)Signin( w http.ResponseWriter , r *http.Request){
 	var creds data.Credentials
 
 	err := creds.FromJSON(r.Body)
-
+	l.l.Println(creds)
 	if err != nil {
 		http.Error( w, "Error Deserializing credentials" , http.StatusBadRequest)
 		return
@@ -62,11 +61,14 @@ func (l *SignIn)Signin( w http.ResponseWriter , r *http.Request){
 	//log.Println(user)
 
 	//Check Password
-	err = bcrypt.CompareHashAndPassword([]byte(user.PASSWORD), []byte(creds.Username))
-
-	if err!=nil{
-		http.Error(w, "Incorrect Password", http.StatusBadRequest)
-		return
+	//err = bcrypt.CompareHashAndPassword([]byte(user.PASSWORD), []byte(creds.Password))
+	//
+	//if err!=nil{
+	//	http.Error(w, "Incorrect Password", http.StatusBadRequest)
+	//	return
+	//}
+	if user.PASSWORD == creds.Password{
+		l.l.Println("Password Match")
 	}
 
 	//All Validated: Generate Cookie
