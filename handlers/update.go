@@ -43,11 +43,8 @@ func (p *UpdateH) Update(rw http.ResponseWriter, r *http.Request){
 			return
 		}
 	}
-	//id,err := ParseCookie(r)
-//	id, err := primitive.ObjectIDFromHex("5f63bc941469e683ccf9b188")
 
 	id := p.ParseCookie(r)
-	// id, err := primitive.ObjectIDFromHex("5f5cd403a819ad84f8cdfc97")
 
 	if err !=nil{
 		http.Error(rw,"Invalid Cookie ReLOGIN", http.StatusBadRequest)

@@ -4,6 +4,7 @@ import (
 	"auth/data"
 	"github.com/dgrijalva/jwt-go"
 	"go.mongodb.org/mongo-driver/bson"
+	"golang.org/x/crypto/bcrypt"
 	"log"
 	"net/http"
 	"os"
@@ -60,12 +61,12 @@ func (l *SignIn)Signin( w http.ResponseWriter , r *http.Request){
 	//log.Println(user)
 
 	//Check Password
-	//err = bcrypt.CompareHashAndPassword([]byte(user.PASSWORD), []byte(creds.Password))
-	//
-	//if err!=nil{
-	//	http.Error(w, "Incorrect Password", http.StatusBadRequest)
-	//	return
-	//}
+	err = bcrypt.CompareHashAndPassword([]byte(user.PASSWORD), []byte(creds.Password))
+
+	if err!=nil{
+		http.Error(w, "Incorrect Password", http.StatusBadRequest)
+		return
+	}
 
 	
 	if user.PASSWORD == creds.Password{
