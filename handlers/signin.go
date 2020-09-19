@@ -88,7 +88,7 @@ func (l *SignIn)Signin( w http.ResponseWriter , r *http.Request){
 		Name : "session_token",
 		Value : sessionToken,
 		Expires : time.Now().Add( 1 * time.Hour ),
-		HttpOnly: true,
+	// not http.Only : https://stackoverflow.com/questions/50361460/samesite-cookie-attribute-not-being-set-using-javascript
 		SameSite: 4, //SameSiteNone : https://golang.org/src/net/http/cookie.go
 		Secure :true, //https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie/SameSite
 	})
