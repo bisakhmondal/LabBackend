@@ -78,7 +78,7 @@ func main(){
 	getRouter.HandleFunc( "/" , checkGet )
 	
 
-    updateRouter :=sm.Methods(http.MethodPut).Subrouter()
+    updateRouter :=sm.Methods(http.MethodPost).Subrouter()
     updateRouter.HandleFunc("/update", UpdateHan.Update)
 	updateRouter.HandleFunc("/update-image",UpdateHan.UploadImage)
 	// updateRouter.Use(handlers.CorsMiddleware)
