@@ -3,7 +3,7 @@ package handlers
 import (
 	"auth/data"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	// "go.mongodb.org/mongo-driver/bson/primitive"
 	"log"
 	"net/http"
 	"strings"
@@ -78,8 +78,8 @@ func (p *UpdateH)UploadImage(rw http.ResponseWriter, r* http.Request){
 	}
 
 	// will check for with frontend..
-	//id,err := ParseCookie(r)
-	id, err := primitive.ObjectIDFromHex("5f5cd403a819ad84f8cdfc97")
+	id:= p.ParseCookie(r)
+	// id, err := primitive.ObjectIDFromHex("5f5cd403a819ad84f8cdfc97")
 
 	if err !=nil{
 		http.Error(rw, "Unable to Parse Cookie", http.StatusNetworkAuthenticationRequired)
@@ -103,7 +103,7 @@ func (p *UpdateH)UploadImage(rw http.ResponseWriter, r* http.Request){
 	//log.Println("encoded String", len(strImg))
 
 	var user data.Person
-	user.ID=id
+	user.ID=*id
 	user.PROFILE= strImg
 
 	p.db.UpdateDB(&user)
