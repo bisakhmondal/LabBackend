@@ -90,6 +90,7 @@ func (l *SignIn)Signin( w http.ResponseWriter , r *http.Request){
 		Expires : time.Now().Add( 1 * time.Hour ),
 		HttpOnly: true,
 		SameSite: 4, //SameSiteNone : https://golang.org/src/net/http/cookie.go
+		Secure :true, //https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie/SameSite
 	})
 	
 	
