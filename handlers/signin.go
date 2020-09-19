@@ -89,6 +89,7 @@ func (l *SignIn)Signin( w http.ResponseWriter , r *http.Request){
 		Value : sessionToken,
 		Expires : time.Now().Add( 1 * time.Hour ),
 		HttpOnly: true,
+		SameSite: 4, //SameSiteNone : https://golang.org/src/net/http/cookie.go
 	})
 	
     
