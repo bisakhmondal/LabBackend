@@ -70,7 +70,7 @@ func main(){
 
 	updateRouter :=sm.Methods(http.MethodPost).Subrouter()
     updateRouter.HandleFunc("/update", UpdateHan.Update)
-	updateRouter.HandleFunc("/update-image",UpdateHan.UploadImage)
+	// updateRouter.HandleFunc("/update-image",UpdateHan.UploadImage)
 
 	loginRouter := sm.Methods( http.MethodPost).Subrouter()
 	// loginRouter.Use(handlers.CorsMiddleware)
