@@ -15,17 +15,17 @@ import (
 //type Projects []*Project
 
 type Person struct {
-	ID primitive.ObjectID `bson:"_id,omitempty" json:"id"`
-	NAME string `bson:"name,omitempty" json:"name" validate:"required"`
-	EMAIL string `bson:"email,omitempty" json:"email" validate:"email,required"`
-	EDUCATION []string `bson:"education,omitempty" json:"education"`
-	USERNAME string `bson:"username,omitempty" json:"username"`
+	ID primitive.ObjectID `bson:"_id,omitempty" json:"id,omitempty"`
+	NAME string `bson:"name,omitempty" json:"name,omitempty" validate:"required"`
+	EMAIL string `bson:"email,omitempty" json:"email,omitempty" validate:"email,required"`
+	EDUCATION []string `bson:"education,omitempty" json:"education,omitempty"`
+	USERNAME string `bson:"username,omitempty" json:"username,omitempty"`
 	PASSWORD string `bson:"password,omitempty" json:"-"`//hash String
-	ROUTE string `bson:"route,omitempty" json:"route"`
-	PROFILE string `bson:"profile,omitempty" json:"profile"`
-	SPECIALIZATION []string `bson:"specialization,omitempty" json:"specialization"` //Specialized Field
-	PROJECTS []string `bson:"projects,omitempty" json:"projects"`
-	ACHIEVEMENTS []string `bson:"achievements,omitempty" json:"achievements"`
+	ROUTE string `bson:"route,omitempty" json:"route,omitempty"`
+	PROFILE string `bson:"profile,omitempty" json:"profile,omitempty"`
+	SPECIALIZATION []string `bson:"specialization,omitempty" json:"specialization,omitempty"` //Specialized Field
+	PROJECTS []string `bson:"projects,omitempty" json:"projects,omitempty"`
+	ACHIEVEMENTS []string `bson:"achievements,omitempty" json:"achievements,omitempty"`
 }
 
 func (p *Person) FromJSON(r io.Reader)error{

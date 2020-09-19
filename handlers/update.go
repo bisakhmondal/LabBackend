@@ -2,9 +2,11 @@ package handlers
 
 import (
 	"auth/data"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"log"
 	"net/http"
+	"strings"
 )
 
 type UpdateH struct{
@@ -24,14 +26,23 @@ func (p *UpdateH)Update(rw http.ResponseWriter, r *http.Request){
 	var user data.Person
 	err := user.FromJSON(r.Body)
 	//user.ID = bson.M{"$oid":}
+
 	if err !=nil{
 		http.Error(rw,"Invalid Request to Update", http.StatusBadRequest)
 		p.l.Println("Invalid Request to Update", err)
 		return
 	}
 
+	if user.ROUTE != ""{
+		filter := &bson.M{"route": strings.ToLower(user.ROUTE)}
+		if p.db.CheckInfo(filter)==true {
+			http.Error(rw,"Route already Assigned",http.StatusBadRequest)
+			p.l.Println("same route")
+			return
+		}
+	}
 	//id,err := ParseCookie(r)
-	id, err := primitive.ObjectIDFromHex("5f5cd403a819ad84f8cdfc97")
+	id, err := primitive.ObjectIDFromHex("5f63bc941469e683ccf9b188")
 
 	if err !=nil{
 		http.Error(rw,"Invalid Cookie ReLOGIN", http.StatusBadRequest)
@@ -68,7 +79,7 @@ func (p *UpdateH)UploadImage(rw http.ResponseWriter, r* http.Request){
 		p.l.Println(err)
 		return
 	}
-	image,_,err := r.FormFile("file")
+	image,fh,err := r.FormFile("file")
 
 	if err!=nil{
 		http.Error(rw, "Invalid file format", http.StatusBadRequest)
@@ -76,7 +87,7 @@ func (p *UpdateH)UploadImage(rw http.ResponseWriter, r* http.Request){
 		return
 	}
 
-	strImg, err := ParseImage(image)
+	strImg, err := ParseImage(image, fh.Filename)
 	if err !=nil{
 		http.Error(rw, "Internal error", http.StatusInternalServerError)
 		p.l.Println(err)
