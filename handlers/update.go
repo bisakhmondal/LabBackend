@@ -21,7 +21,7 @@ func NewUpdateH(db * data.MongoClient,l *log.Logger) *UpdateH{
 }
 
 //Update Route.
-func (p *UpdateH)Update(rw http.ResponseWriter, r *http.Request){
+func (p *UpdateH) Update(rw http.ResponseWriter, r *http.Request){
 	p.l.Printf("PUT %s\n" , r.RequestURI)
 	var user data.Person
 	err := user.FromJSON(r.Body)
@@ -32,7 +32,7 @@ func (p *UpdateH)Update(rw http.ResponseWriter, r *http.Request){
 		return
 	}
 
-	id,err := ParseCookie(r)
+	id := p.ParseCookie(r)
 	// id, err := primitive.ObjectIDFromHex("5f5cd403a819ad84f8cdfc97")
 
 	if err !=nil{

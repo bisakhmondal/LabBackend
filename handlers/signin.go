@@ -9,6 +9,7 @@ import (
 	"os"
 	"strings"
 	"time"
+	"encoding/json"
 )
 
 type SignIn struct {
@@ -21,6 +22,11 @@ func NewSignIn(db * data.MongoClient,l *log.Logger) *SignIn{
 		db: db,
 		l: l,
 	}
+}
+
+type RespToken struct{
+	token string `json:"string"`
+	username string `json:"string"`
 }
 
 func (l *SignIn)Signin( w http.ResponseWriter , r *http.Request){
@@ -60,6 +66,8 @@ func (l *SignIn)Signin( w http.ResponseWriter , r *http.Request){
 	//	http.Error(w, "Incorrect Password", http.StatusBadRequest)
 	//	return
 	//}
+
+	
 	if user.PASSWORD == creds.Password{
 		l.l.Println("Password Match")
 	}
@@ -84,22 +92,34 @@ func (l *SignIn)Signin( w http.ResponseWriter , r *http.Request){
 	// }
 
 
-	http.SetCookie(w , &http.Cookie{
-		Name : "session_token",
-		Value : sessionToken,
-		Expires : time.Now().Add( 1 * time.Hour ),
-		MaxAge :2600000,
-	// not http.Only : https://stackoverflow.com/questions/50361460/samesite-cookie-attribute-not-being-set-using-javascript
-		SameSite: 4, //SameSiteNone : https://golang.org/src/net/http/cookie.go
-		Secure :true, //https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie/SameSite
-	})
+	// http.SetCookie(w , &http.Cookie{
+	// 	Name : "session_token",
+	// 	Value : sessionToken,
+	// 	Expires : time.Now().Add( 1 * time.Hour ),
+	// 	MaxAge :2600000,
+	// // not http.Only : https://stackoverflow.com/questions/50361460/samesite-cookie-attribute-not-being-set-using-javascript
+	// 	SameSite: 4, //SameSiteNone : https://golang.org/src/net/http/cookie.go
+	// 	Secure :true, //https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie/SameSite
+	// })
 	
 	
     
-	
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
+	
 	//For testing
-	w.Write([]byte(user.USERNAME))
+	// data := RespToken{ token : sessionToken, username : user.USERNAME }
+	
+	data, _ := json.Marshal(map[string]string{
+		"token":sessionToken,
+		"username":user.USERNAME,
+	})
+
+	w.Write(data)
+	
+	
+	
+	
 }
 
 func createToken( id string , username string ) ( string , error ){
