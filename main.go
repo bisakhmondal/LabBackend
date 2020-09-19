@@ -7,7 +7,7 @@ import (
 	"context"
 	"fmt"
 
-	//gohandlers "github.com/gorilla/handlers"
+	// gohandlers "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/nicholasjackson/env"
 	"github.com/spf13/viper"
@@ -18,6 +18,7 @@ import (
 	"os"
 	"os/signal"
 	"time"
+	// "github.com/rs/cors"
 	
 )
 
@@ -67,9 +68,15 @@ func main(){
 	
 	
 
+	
+	
+
 	loginRouter := sm.Methods( http.MethodPost).Subrouter()
 	// loginRouter.Use(handlers.CorsMiddleware)
 	loginRouter.HandleFunc("/login" , SignInHan.Signin)
+	// updateRouter :=sm.Methods(http.MethodPost).Subrouter()
+	loginRouter.HandleFunc("/update", UpdateHan.Update)
+	loginRouter.HandleFunc("/update-image",UpdateHan.UploadImage)
 	
 	
 
@@ -77,15 +84,15 @@ func main(){
 	getRouter.HandleFunc( "/" , checkGet )
 	
 
-    updateRouter :=sm.Methods(http.MethodPut).Subrouter()
-    updateRouter.HandleFunc("/update", UpdateHan.Update)
-	updateRouter.HandleFunc("/update-image",UpdateHan.UploadImage)
+    
 	// updateRouter.Use(handlers.CorsMiddleware)
 
 
 	
 
 	server := server.New(sm,bindAddress)
+
+
 
     // start the server
 	go func() {
@@ -96,7 +103,12 @@ func main(){
 			l.Printf("Error starting server: %s\n", err)
 			os.Exit(1)
 		}
-    }()
+	}()
+
+	
+	
+	// log.Fatal(http.ListenAndServe(bindAddress, sm ))//corsH.Handler(sm)))
+
 
     // trap sigterm or interupt and gracefully shutdown the server
 	c := make(chan os.Signal, 1)

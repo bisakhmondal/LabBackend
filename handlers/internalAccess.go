@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"os"
 	"time"
+	"strings"
+	
 )
 
 func MiddlewareAuthenticate( next http.Handler ) http.Handler{
@@ -56,27 +58,30 @@ func CorsMiddleware( next http.Handler ) http.Handler{
 }
 
 // Always Fetch the userID from http-only cookie.
-func ParseCookie(r * http.Request) (*primitive.ObjectID,error){
-	c, err := r.Cookie("session_token")
-	if err != nil {
-		return nil,err
+func (p *UpdateH)ParseCookie(r * http.Request) (*primitive.ObjectID){
+	// c, err := r.Cookie("session_token")
+	c := r.Header["Authorization"]
+	
+	if len(c) == 0  {
+		return nil
 	}
-	sessionToken := c.Value
+	sessionToken := strings.Split(c[0], " ")[1]
+	
 	claims := jwt.MapClaims{}
-	_ , err = jwt.ParseWithClaims(sessionToken,  claims, func(token *jwt.Token) (interface{}, error) {
+	_ , err := jwt.ParseWithClaims(sessionToken,  claims, func(token *jwt.Token) (interface{}, error) {
 		return []byte(os.Getenv("API_SECRET")), nil
 	})
 
 	if err!=nil{
-		return nil,err
+		return nil
 	}
 	id, err := primitive.ObjectIDFromHex(claims["id"].(string))
 
 	if err !=nil{
-		return nil, err
+		return nil
 	}
 
-	return &id,nil
+	return &id
 }
 
 func Refresh(w http.ResponseWriter, r *http.Request) {

@@ -17,7 +17,8 @@ func New(smux *mux.Router, bindAddress string) *http.Server{
 	// corsH := handlers.CORS(handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}), handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS"}), handlers.AllowedOrigins([]string{"http://34.83.188.4:3000"}))
 	corsH := cors.New(cors.Options{
         AllowedOrigins: []string{"http://34.83.188.4:3000","http://34.83.188.4"},
-        AllowCredentials: true,
+		AllowCredentials: true,
+		AllowedHeaders :[]string{"X-Requested-With", "Content-Type", "Authorization"},
     })
 
 	// tls Configuration

@@ -15,6 +15,7 @@ type UpdateH struct{
 }
 
 func NewUpdateH(db * data.MongoClient,l *log.Logger) *UpdateH{
+	
 	return &UpdateH{
 		db: db,
 		l: l,
@@ -22,7 +23,8 @@ func NewUpdateH(db * data.MongoClient,l *log.Logger) *UpdateH{
 }
 
 //Update Route.
-func (p *UpdateH)Update(rw http.ResponseWriter, r *http.Request){
+func (p *UpdateH) Update(rw http.ResponseWriter, r *http.Request){
+	p.l.Printf("PUT %s\n" , r.RequestURI)
 	var user data.Person
 	err := user.FromJSON(r.Body)
 	//user.ID = bson.M{"$oid":}
@@ -42,13 +44,16 @@ func (p *UpdateH)Update(rw http.ResponseWriter, r *http.Request){
 		}
 	}
 	//id,err := ParseCookie(r)
-	id, err := primitive.ObjectIDFromHex("5f63bc941469e683ccf9b188")
+//	id, err := primitive.ObjectIDFromHex("5f63bc941469e683ccf9b188")
+
+	id := p.ParseCookie(r)
+	// id, err := primitive.ObjectIDFromHex("5f5cd403a819ad84f8cdfc97")
 
 	if err !=nil{
 		http.Error(rw,"Invalid Cookie ReLOGIN", http.StatusBadRequest)
 		return
 	}
-	user.ID = id //id
+	user.ID = *id //id
 
 	err = p.db.UpdateDB(&user)
 
@@ -56,6 +61,8 @@ func (p *UpdateH)Update(rw http.ResponseWriter, r *http.Request){
 		http.Error(rw, "Unable to Update", http.StatusBadRequest)
 		return
 	}
+
+	
     
 	rw.WriteHeader(http.StatusOK)
 }
