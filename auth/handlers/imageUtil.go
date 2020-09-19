@@ -6,12 +6,23 @@ import (
 	"github.com/nfnt/resize"
 	"image"
 	"image/jpeg"
+	"image/png"
 	"io"
+	"log"
+	"os"
+	"strings"
 )
 
 //Image Parser to base64 encoding
-func ParseImage(r io.ReadCloser) (string,error){
-	image,_,err :=image.Decode(r)
+func ParseImage(r io.ReadCloser, filename string) (string,error){
+	var image image.Image
+	var err error
+	//for Png and JPEG seperate reader
+	if strings.HasSuffix(filename,"png"){
+		image,err =png.Decode(r)
+	}else {
+		image, err = jpeg.Decode(r)
+	}
 
 	if err!=nil{
 		return "", err
@@ -27,10 +38,14 @@ func ParseImage(r io.ReadCloser) (string,error){
 		nil,
 	)
 	if err != nil{
+		log.Println("err2")
 		return "", err
 	}
 	//Encoding the binary to base64
 	encoded := base64.StdEncoding.EncodeToString(byt.Bytes())
+	FIL,_ := os.Create("def.txt")
 
+	b := bytes.NewReader([]byte(encoded))
+	io.Copy(FIL,b)
 	return encoded, nil
 }

@@ -61,14 +61,14 @@ func (p *UpdateH)UploadImage(rw http.ResponseWriter, r* http.Request){
 
 	// will check for with frontend..
 	//id,err := ParseCookie(r)
-	id, err := primitive.ObjectIDFromHex("5f5cd403a819ad84f8cdfc97")
+	id, err := primitive.ObjectIDFromHex("5f63bc941469e683ccf9b188")
 
 	if err !=nil{
 		http.Error(rw, "Unable to Parse Cookie", http.StatusNetworkAuthenticationRequired)
 		p.l.Println(err)
 		return
 	}
-	image,_,err := r.FormFile("file")
+	image,fh,err := r.FormFile("file")
 
 	if err!=nil{
 		http.Error(rw, "Invalid file format", http.StatusBadRequest)
@@ -76,7 +76,7 @@ func (p *UpdateH)UploadImage(rw http.ResponseWriter, r* http.Request){
 		return
 	}
 
-	strImg, err := ParseImage(image)
+	strImg, err := ParseImage(image,fh.Filename)
 	if err !=nil{
 		http.Error(rw, "Internal error", http.StatusInternalServerError)
 		p.l.Println(err)
