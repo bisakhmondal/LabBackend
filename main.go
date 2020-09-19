@@ -68,6 +68,10 @@ func main(){
 	
 	
 
+	updateRouter :=sm.Methods(http.MethodPost).Subrouter()
+    updateRouter.HandleFunc("/update", UpdateHan.Update)
+	updateRouter.HandleFunc("/update-image",UpdateHan.UploadImage)
+
 	loginRouter := sm.Methods( http.MethodPost).Subrouter()
 	// loginRouter.Use(handlers.CorsMiddleware)
 	loginRouter.HandleFunc("/login" , SignInHan.Signin)
@@ -78,9 +82,7 @@ func main(){
 	getRouter.HandleFunc( "/" , checkGet )
 	
 
-    updateRouter :=sm.Methods(http.MethodPost).Subrouter()
-    updateRouter.HandleFunc("/update", UpdateHan.Update)
-	updateRouter.HandleFunc("/update-image",UpdateHan.UploadImage)
+    
 	// updateRouter.Use(handlers.CorsMiddleware)
 
 
