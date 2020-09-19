@@ -29,7 +29,7 @@ func (l *SignIn)Signin( w http.ResponseWriter , r *http.Request){
 	var creds data.Credentials
 
 	err := creds.FromJSON(r.Body)
-	l.l.Println(creds)
+	
 	if err != nil {
 		http.Error( w, "Error Deserializing credentials" , http.StatusBadRequest)
 		return
@@ -91,6 +91,7 @@ func (l *SignIn)Signin( w http.ResponseWriter , r *http.Request){
 		HttpOnly: true,
 		SameSite: 4, //SameSiteNone : https://golang.org/src/net/http/cookie.go
 	})
+	
 	
     
 	
