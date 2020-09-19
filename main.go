@@ -4,12 +4,12 @@ import (
 	"context"
 	"github.com/gorilla/mux"
 	"github.com/nicholasjackson/env"
-	"github.com/spf13/viper"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
 	"net/http"
 	"os"
+	"fmt"
 	"os/signal"
 	"serving-api/data"
 	"serving-api/handlers"
@@ -19,10 +19,11 @@ import (
 
 
 var (
-	bindAddress = env.String("BIND_ADDRESS",false,":8080","bind address for server")
-	bindAddress2 = env.String("BIND_ADDRESS",false,":9090","bind address for server")
+	//bindAddress = env.String("BIND_ADDRESS",false,":8080","bind address for server")
+	bindAddress2 = GetPort()//env.String("BIND_ADDRESS",false,":9090","bind address for server")
 	certFile = os.Getenv("CertFile")
 	certKey = os.Getenv("CertKey")
+	
 )
 func main(){
 
@@ -35,7 +36,7 @@ func main(){
 	ctx, cancel := context.WithTimeout(context.Background(),10*time.Second)
 	defer cancel()
 
-	URI := getURI("MONGO")
+	URI := os.Getenv("MONGO")
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(URI))
 	
 	if err !=nil{
@@ -58,11 +59,12 @@ func main(){
 	getRouter.HandleFunc("/user/{route:[a-zA-Z0-9]+}", pHandler.FetchUser)
 
 	//Create a new tls server
-	Server := server.New(smux,*bindAddress,true)
+	//Server := server.New(smux,*bindAddress,true)
+	
 	//Create a new http Server
-	Serverhttp :=server.New(smux,*bindAddress2,false)
+	Serverhttp :=server.New(smux,bindAddress2,false)
 
-	//starting server
+	/*//starting server
 	go func(){
 		l.Println("HTTPS starting at Port: ",*bindAddress)
 
@@ -72,9 +74,9 @@ func main(){
 			l.Fatal("Server starting Failed",err)
 		}
 	}()
-
+*/
 	go func(){
-		l.Println("HTTP starting at Port: ",*bindAddress2)
+		l.Println("HTTP starting at Port: ",bindAddress2)
 
 		err := Serverhttp.ListenAndServe()
 
@@ -92,26 +94,17 @@ func main(){
 	
 	l.Println("Shutting Down... ",sig)
 
-	Server.Shutdown(ctx)
+	//Server.Shutdown(ctx)
 	Serverhttp.Shutdown(ctx)
 
 }
 
-//Get URI from Environment yaml file
-func getURI(key string) string{
-	viper.SetConfigFile("config.yaml")
-
-	err:= viper.ReadInConfig()
-	
-	if err !=nil {
-		log.Fatal("Can't Read Env Variable",err)
+func GetPort() string {
+	 	var port = os.Getenv("PORT")
+	 	// Set a default port if there is nothing in the environment
+	 	if port == "" {
+	 		port = "4747"
+	 		fmt.Println("INFO: No PORT environment variable detected, defaulting to " + port)
+	 	}
+		return ":" + port
 	}
-
-	value,ok := viper.Get(key).(string)
-	
-	if !ok{
-		log.Fatal("Invalid TypeCast")
-	}
-
-	return value
-}
