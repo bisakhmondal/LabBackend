@@ -6,13 +6,13 @@ RUN apk add \
         curl \
         zip
 
-COPY ./serving-api /backend
+COPY ./auth /backend
 WORKDIR /backend/
 
 ENV CertKey certs/server.key
 ENV CertFile certs/server.crt
+ENV API_SECRET O1z378nx3Nu3o2Hf0DeYTIwBBJIuEPJHrYmbLf2wRJijK7v5oO
 
 EXPOSE 8080
-EXPOSE 9090
 
 CMD ["go","run","main.go"]
