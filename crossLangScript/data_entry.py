@@ -60,15 +60,15 @@ coll = db['info']
 
 person = Person()
 person.update(
-    name= 'Shuvayan',
-    email = 'sgd030@gmail.com',
-    username= 'nibba',
+    name= 'Bisakh Mondal',
+    email = 'bisakhmondal00@gmail.com',
+    username= 'bisakh',
     password = 'pass123' ,
-    route = 'shuvayan',
-    education = ['HVM' , 'JU'],
+    route = 'bisakh',
+    education = [ 'JU'],
     specialization = ['CV' ,'NLP'],
-    achievements = ['ache1' , 'aceh2'],
-    projects = [{'name':'pro1' , 'img':'im1'} , {'name':'pro2' , 'img':'im2' } , {'name':'pro3'}]
+    achievements = ['ache1', 'achv2' , 'achv3'],
+    projects = ['projects', 'project2']
 )
 
 doc ={}
@@ -107,6 +107,9 @@ doc['password']=hash
 
 
 if coll.find_one({"username":doc['username']}) is not None:
+    sys.exit()
+
+if coll.find_one({"route":doc['route']}) is not None:
     sys.exit()
 
 
