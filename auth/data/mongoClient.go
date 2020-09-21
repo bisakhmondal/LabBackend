@@ -5,6 +5,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"log"
 	"time"
 )
 
@@ -78,4 +79,19 @@ func (p* MongoClient)UpdateDB(personData *Person)error{
 	_ = coll.FindOneAndUpdate(ctx,filter, bson.M{"$set":update})
 
 	return nil
+}
+//checkinfo
+func (p* MongoClient)CheckInfo(filter *bson.M) bool{
+	coll := p.client.Database("users").Collection("info")
+	ctx,cancel := context.WithTimeout(context.TODO(),5*time.Second)
+	defer cancel()
+
+	var temp Person
+	err := coll.FindOne(ctx,filter).Decode(&temp)
+	log.Println(temp,err)
+
+	if err!=nil{
+		return false
+	}
+	return true
 }
